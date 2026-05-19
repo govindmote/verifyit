@@ -28,7 +28,7 @@ export default function Navbar() {
     { path: '/', label: '🏠 Home' },
     { path: '/submit', label: '📝 Submit' },
     { path: '/vote', label: '🗳️ Vote' },
-    { path: '/verdict', label: '⚖️ Verdicts' },
+    { path: '/verdicts', label: '⚖️ Verdicts' },
     { path: '/search', label: '🔍 Search' },
     { path: '/dashboard', label: '📊 Dashboard' },
     { path: '/explorer', label: '⛓ Explorer' },

@@ -1,6 +1,7 @@
 ﻿import React, { useEffect, useState } from "react";
 import axios from "axios";
 import VerdictCertificate from "../components/VerdictCertificate";
+
 export default function Verdict() {
   const [claims, setClaims] = useState([]);
   const [filter, setFilter] = useState("all");
@@ -8,7 +9,7 @@ export default function Verdict() {
   const [certClaim, setCertClaim] = useState(null);
 
   useEffect(() => {
-    axios.get("http://localhost:5000/api/claims?status=all&limit=100")
+    axios.get(`http://localhost:5000/api/claims?status=all&limit=100`)
       .then(res => {
         const data = res.data.claims || res.data;
         setClaims(Array.isArray(data) ? data : []);
@@ -75,7 +76,9 @@ export default function Verdict() {
     .vrd-bar{height:6px;background:rgba(26,39,68,0.9);border-radius:3px;overflow:hidden;margin-bottom:0.45rem;}
     .vrd-bar-fill{height:100%;border-radius:3px;background:linear-gradient(90deg,#00ff88,#00f5ff);transition:width 0.5s;}
     .vrd-stats{display:flex;justify-content:space-between;font-family:'Share Tech Mono',monospace;font-size:0.67rem;margin-bottom:1rem;}
-    .vrd-chain{font-family:'Share Tech Mono',monospace;font-size:0.6rem;color:rgba(100,116,139,0.35);border-top:1px solid rgba(26,39,68,0.6);padding-top:0.75rem;margin-top:0.25rem;}
+    .vrd-chain{font-family:'Share Tech Mono',monospace;font-size:0.6rem;border-top:1px solid rgba(26,39,68,0.6);padding-top:0.75rem;margin-top:0.25rem;margin-bottom:0.75rem;}
+    .vrd-cert-btn{width:100%;padding:0.5rem;background:rgba(0,245,255,0.06);border:1px solid rgba(0,245,255,0.2);border-radius:8px;color:#00f5ff;font-family:'Share Tech Mono',monospace;font-size:0.65rem;cursor:pointer;letter-spacing:0.08em;transition:all 0.2s;}
+    .vrd-cert-btn:hover{background:rgba(0,245,255,0.12);border-color:rgba(0,245,255,0.4);}
     .vrd-loading{display:flex;align-items:center;justify-content:center;height:200px;font-family:'Share Tech Mono',monospace;font-size:0.85rem;color:#00f5ff;gap:0.75rem;}
     .vrd-spin{width:18px;height:18px;border:2px solid rgba(0,245,255,0.2);border-top-color:#00f5ff;border-radius:50%;animation:vrdspin 0.7s linear infinite;}
     @keyframes vrdspin{to{transform:rotate(360deg);}}
@@ -84,8 +87,18 @@ export default function Verdict() {
     .vrd-empty-title{font-family:'Orbitron',monospace;font-size:1rem;color:var(--text,#e2e8f0);}
     .vrd-count{font-family:'Share Tech Mono',monospace;font-size:0.58rem;opacity:0.6;margin-left:0.3rem;}
     [data-theme="light"] .vrd-card{background:#ffffff;border-color:rgba(0,0,0,0.1);}
-    [data-theme="light"] .vrd-ctitle{color:#1e293b;} [data-theme="light"] .vrd-cdesc{color:#475569;} [data-theme="light"] .vrd-id{color:#94a3b8;} [data-theme="light"] .vrd-sub{color:#64748b;} [data-theme="light"] .vrd-title{color:#0369a1;border-color:#0369a1;} [data-theme="light"] .vrd-fbtn{color:#475569;border-color:rgba(0,0,0,0.15);} [data-theme="light"] .vrd-count{color:#94a3b8;}
-    [data-theme="light"] .vrd-bar{background:rgba(0,0,0,0.08);} [data-theme="light"] .vrd-chain{color:#334155;border-color:rgba(0,0,0,0.12);} [data-theme="light"] .vrd-chain a{color:#0369a1;} [data-theme="light"] .vrd-chain span{color:#475569;} [data-theme="light"] .vrd-stats span{opacity:1;}
+    [data-theme="light"] .vrd-ctitle{color:#1e293b;}
+    [data-theme="light"] .vrd-cdesc{color:#475569;}
+    [data-theme="light"] .vrd-id{color:#94a3b8;}
+    [data-theme="light"] .vrd-sub{color:#64748b;}
+    [data-theme="light"] .vrd-title{color:#0369a1;border-color:#0369a1;}
+    [data-theme="light"] .vrd-fbtn{color:#475569;border-color:rgba(0,0,0,0.15);}
+    [data-theme="light"] .vrd-count{color:#94a3b8;}
+    [data-theme="light"] .vrd-bar{background:rgba(0,0,0,0.08);}
+    [data-theme="light"] .vrd-chain{color:#334155;border-color:rgba(0,0,0,0.12);}
+    [data-theme="light"] .vrd-chain a{color:#0369a1;}
+    [data-theme="light"] .vrd-chain span{color:#475569;}
+    [data-theme="light"] .vrd-stats span{opacity:1;}
   `;
 
   if (loading) return (
@@ -94,11 +107,11 @@ export default function Verdict() {
   );
 
   const filterDefs = [
-    { key: "all",        label: "All",        count: counts.all },
-    { key: "TRUE",       label: "✅ True",     count: counts.TRUE },
-    { key: "FALSE",      label: "❌ False",    count: counts.FALSE },
+    { key: "all",        label: "All",           count: counts.all },
+    { key: "TRUE",       label: "✅ True",        count: counts.TRUE },
+    { key: "FALSE",      label: "❌ False",       count: counts.FALSE },
     { key: "UNVERIFIED", label: "⚠️ Unverified", count: counts.UNVERIFIED },
-    { key: "PENDING",    label: "⏳ Pending",  count: counts.PENDING },
+    { key: "PENDING",    label: "⏳ Pending",     count: counts.PENDING },
   ];
 
   return (
@@ -109,11 +122,7 @@ export default function Verdict() {
         <div className="vrd-sub">All verdicts are permanently recorded on Polygon Amoy Testnet.</div>
         <div className="vrd-filters">
           {filterDefs.map(f => (
-            <button
-              key={f.key}
-              className={`vrd-fbtn ${filter === f.key ? "active-" + f.key : ""}`}
-              onClick={() => setFilter(f.key)}
-            >
+            <button key={f.key} className={`vrd-fbtn ${filter === f.key ? "active-" + f.key : ""}`} onClick={() => setFilter(f.key)}>
               {f.label} <span className="vrd-count">({f.count})</span>
             </button>
           ))}
@@ -147,13 +156,29 @@ export default function Verdict() {
                   <span style={{color:"#00ff88"}}>✅ {tv} True ({pct}%)</span>
                   <span style={{color:"#ff3366"}}>❌ {fv} False ({100-pct}%)</span>
                 </div>
-                <div className="vrd-chain">{claim.blockchain?.txHash && claim.blockchain.txHash !== "already-recorded" ? <a href={`https://amoy.polygonscan.com/tx/${claim.blockchain.txHash}`} target="_blank" rel="noreferrer" style={{textDecoration:"none",color:"#00b4cc"}}>{claim.blockchain.txHash.slice(0,20)}...{claim.blockchain.txHash.slice(-6)} ↗</a> : <span style={{color:"#64748b"}}>⛓ Recorded on Polygon Amoy</span>}</div>
-                {claim.adminOverride?.by && <div style={{marginTop:"0.5rem",display:"inline-flex",alignItems:"center",gap:"0.4rem",padding:"0.25rem 0.7rem",borderRadius:"6px",background:"rgba(255,165,0,0.08)",border:"1px solid rgba(255,165,0,0.25)",fontFamily:"Share Tech Mono,monospace",fontSize:"0.6rem",color:"#f59e0b"}}>⚠ ADMIN VERIFIED · {claim.adminOverride.reason}</div>}
-                {claim.verdict && <button onClick={() => setCertClaim(claim)} style={{marginTop:"0.75rem",width:"100%",padding:"0.5rem",background:"rgba(0,245,255,0.06)",border:"1px solid rgba(0,245,255,0.2)",borderRadius:"8px",color:"#00f5ff",fontFamily:"Share Tech Mono,monospace",fontSize:"0.65rem",cursor:"pointer",letterSpacing:"0.08em"}}>&#128196; DOWNLOAD CERTIFICATE</button>}
+                <div className="vrd-chain">
+                  {claim.blockchain?.txHash && claim.blockchain.txHash !== "already-recorded"
+                    ? <a href={`https://amoy.polygonscan.com/tx/${claim.blockchain.txHash}`} target="_blank" rel="noreferrer" style={{textDecoration:"none",color:"#00b4cc"}}>{claim.blockchain.txHash.slice(0,20)}...{claim.blockchain.txHash.slice(-6)} ↗</a>
+                    : <span style={{color:"#64748b"}}>⛓ Recorded on Polygon Amoy</span>}
+                </div>
+                {claim.verdict && (
+                  <button className="vrd-cert-btn" onClick={() => setCertClaim(claim)}>
+                    &#128196; DOWNLOAD CERTIFICATE
+                  </button>
+                )}
               </div>
             );
           })}
         </div>
       )}
-    </div>{certClaim && <VerdictCertificate claim={certClaim} onClose={() => setCertClaim(null)} />}</>
-  );}
+    </div>
+    {certClaim && <VerdictCertificate claim={certClaim} onClose={() => setCertClaim(null)} />}
+    </>
+  );
+}
+
+
+
+
+
+

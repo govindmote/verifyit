@@ -4,6 +4,8 @@ import { useParams, useNavigate, Link } from "react-router-dom";
 import axios from 'axios';
 import BlockchainConfirm from '../components/BlockchainConfirm';
 
+const API = process.env.REACT_APP_API_URL || "http://localhost:5000";
+
 export default function Vote() {
   const { id } = useParams();
   const navigate = useNavigate();
@@ -19,7 +21,7 @@ export default function Vote() {
 
   const fetchClaims = async () => {
     try {
-      const res = await axios.get("http://localhost:5000/api/claims?status=all&limit=100");
+      const res = await axios.get(`${API}/api/claims?status=all&limit=100`);
       const data = res.data.claims || res.data;
       const list = Array.isArray(data) ? data : [];
       setClaims(list);
@@ -35,7 +37,7 @@ export default function Vote() {
     setMsg(null);
     const username = JSON.parse(localStorage.getItem("user") || "{}").username || "anonymous";
     try {
-      const voteRes = await axios.post("http://localhost:5000/api/votes", {
+      const voteRes = await axios.post(`${API}/api/votes`, {
         claimId,
         voterAddress: username,
         choice,
@@ -82,7 +84,7 @@ export default function Vote() {
 
   const revealColor = verdictReveal === "TRUE" ? "#00ff88" : verdictReveal === "FALSE" ? "#ff3366" : "#ffd700";
   const revealText  = verdictReveal === "TRUE" ? "VERIFIED TRUE" : verdictReveal === "FALSE" ? "MARKED FALSE" : "UNVERIFIED";
-  const revealEmoji = verdictReveal === "TRUE" ? "✅" : verdictReveal === "FALSE" ? "❌" : "⚠️";
+  const revealEmoji = verdictReveal === "TRUE" ? "?" : verdictReveal === "FALSE" ? "?" : "?";
 
   const css = `
     @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&family=Share+Tech+Mono&family=Exo+2:wght@400;600&display=swap');
@@ -185,10 +187,10 @@ export default function Vote() {
     const hasVerdict = !!(claim.verdict);
     const onChain = !!(claim.blockchain?.txHash && claim.blockchain.txHash !== "already-recorded");
     const steps = [
-      { icon: "📝", label: "Submitted", date: submitted,                          state: "done" },
-      { icon: "🗳️", label: "Voting",    date: hasVotes ? "In progress" : "Waiting", state: hasVotes ? "done" : "active" },
-      { icon: "⚖️", label: "Verdict",   date: hasVerdict ? claim.verdict : "Pending", state: hasVerdict ? "done" : hasVotes ? "active" : "pending" },
-      { icon: "⛓️", label: "On-Chain",  date: onChain ? "Recorded" : "Pending",    state: onChain ? "done" : hasVerdict ? "active" : "pending" },
+      { icon: "?", label: "Submitted", date: submitted, state: "done" },
+      { icon: "?", label: "Voting", date: hasVotes ? "In progress" : "Waiting", state: hasVotes ? "done" : "active" },
+      { icon: "?", label: "Verdict", date: hasVerdict ? claim.verdict : "Pending", state: hasVerdict ? "done" : hasVotes ? "active" : "pending" },
+      { icon: "?", label: "On-Chain", date: onChain ? "Recorded" : "Pending", state: onChain ? "done" : hasVerdict ? "active" : "pending" },
     ];
     return (
       <div className="vp-timeline">
@@ -205,6 +207,8 @@ export default function Vote() {
       </div>
     );
   };
+
+  const APP_URL = process.env.REACT_APP_URL || "http://localhost:3000";
 
   if (loading) return (
     <><style>{css}</style>
@@ -234,7 +238,7 @@ export default function Vote() {
           </div>
         )}
         <div className="vp">
-          <button className="vp-back" onClick={() => navigate("/vote")}>← Back to Claims</button>
+          <button className="vp-back" onClick={() => navigate("/vote")}>? Back to Claims</button>
           <div className={`vp-detail ${vClass}`}>
             <div className="vcn vtl" /><div className="vcn vtr" />
             <div className="vcn vbl" /><div className="vcn vbr" />
@@ -245,18 +249,18 @@ export default function Vote() {
             <div className="vp-claim-title">{selected.title}</div>
             <div className="vp-desc">{selected.description}</div>
             {selected.sourceUrl && (
-              <a href={selected.sourceUrl} target="_blank" rel="noreferrer" className="vp-source">View Source →</a>
+              <a href={selected.sourceUrl} target="_blank" rel="noreferrer" className="vp-source">View Source ?</a>
             )}
             <div className="vp-hash">
               {selected.blockchain?.txHash && selected.blockchain.txHash !== "already-recorded"
-                ? <a href={`https://amoy.polygonscan.com/tx/${selected.blockchain.txHash}`} target="_blank" rel="noreferrer" style={{ color: "#00b4cc", textDecoration: "none" }}>⛓ {selected.blockchain.txHash.slice(0, 20)}...{selected.blockchain.txHash.slice(-6)} ↗</a>
-                : <span style={{ color: "#64748b" }}>⛓ {selected.blockchain?.txHash === "already-recorded" ? "Recorded on Polygon Amoy" : "Pending on-chain recording..."}</span>
+                ? <a href={`https://amoy.polygonscan.com/tx/${selected.blockchain.txHash}`} target="_blank" rel="noreferrer" style={{ color: "#00b4cc", textDecoration: "none" }}>? {selected.blockchain.txHash.slice(0, 20)}...{selected.blockchain.txHash.slice(-6)} ?</a>
+                : <span style={{ color: "#64748b" }}>? {selected.blockchain?.txHash === "already-recorded" ? "Recorded on Polygon Amoy" : "Pending on-chain recording..."}</span>
               }
             </div>
             <div style={{ display: "flex", gap: "0.5rem", marginBottom: "0.75rem", flexWrap: "wrap" }}>
-              <a href={"https://wa.me/?text=" + encodeURIComponent("Check this claim on VerifyIt: " + selected.title + " | Vote & verify: http://localhost:3000/vote/" + selected._id)} target="_blank" rel="noreferrer" style={{ display: "inline-flex", alignItems: "center", gap: "0.3rem", padding: "0.35rem 0.8rem", borderRadius: "6px", background: "rgba(37,211,102,0.1)", border: "1px solid rgba(37,211,102,0.3)", color: "#25d366", fontFamily: "Share Tech Mono,monospace", fontSize: "0.65rem", textDecoration: "none" }}>📱 WhatsApp</a>
-              <a href={"https://twitter.com/intent/tweet?text=" + encodeURIComponent("Fact-check this claim: " + selected.title + " | Verdict recorded on blockchain ⛓ #VerifyIt #FactCheck") + "&url=" + encodeURIComponent("http://localhost:3000/vote/" + selected._id)} target="_blank" rel="noreferrer" style={{ display: "inline-flex", alignItems: "center", gap: "0.3rem", padding: "0.35rem 0.8rem", borderRadius: "6px", background: "rgba(0,0,0,0.2)", border: "1px solid rgba(255,255,255,0.15)", color: "#e2e8f0", fontFamily: "Share Tech Mono,monospace", fontSize: "0.65rem", textDecoration: "none" }}>🐦 X / Twitter</a>
-              <button onClick={() => { navigator.clipboard.writeText("http://localhost:3000/vote/" + selected._id); alert("Link copied!"); }} style={{ display: "inline-flex", alignItems: "center", gap: "0.3rem", padding: "0.35rem 0.8rem", borderRadius: "6px", background: "rgba(0,245,255,0.08)", border: "1px solid rgba(0,245,255,0.2)", color: "#00f5ff", fontFamily: "Share Tech Mono,monospace", fontSize: "0.65rem", cursor: "pointer" }}>🔗 Copy Link</button>
+              <a href={`https://wa.me/?text=${encodeURIComponent("Check this claim on VerifyIt: " + selected.title + " | Vote & verify: " + APP_URL + "/vote/" + selected._id)}`} target="_blank" rel="noreferrer" style={{ display: "inline-flex", alignItems: "center", gap: "0.3rem", padding: "0.35rem 0.8rem", borderRadius: "6px", background: "rgba(37,211,102,0.1)", border: "1px solid rgba(37,211,102,0.3)", color: "#25d366", fontFamily: "Share Tech Mono,monospace", fontSize: "0.65rem", textDecoration: "none" }}>? WhatsApp</a>
+              <a href={`https://twitter.com/intent/tweet?text=${encodeURIComponent("Fact-check this claim: " + selected.title + " | Verdict recorded on blockchain ? #VerifyIt #FactCheck")}&url=${encodeURIComponent(APP_URL + "/vote/" + selected._id)}`} target="_blank" rel="noreferrer" style={{ display: "inline-flex", alignItems: "center", gap: "0.3rem", padding: "0.35rem 0.8rem", borderRadius: "6px", background: "rgba(0,0,0,0.2)", border: "1px solid rgba(255,255,255,0.15)", color: "#e2e8f0", fontFamily: "Share Tech Mono,monospace", fontSize: "0.65rem", textDecoration: "none" }}>? X / Twitter</a>
+              <button onClick={() => { navigator.clipboard.writeText(APP_URL + "/vote/" + selected._id); alert("Link copied!"); }} style={{ display: "inline-flex", alignItems: "center", gap: "0.3rem", padding: "0.35rem 0.8rem", borderRadius: "6px", background: "rgba(0,245,255,0.08)", border: "1px solid rgba(0,245,255,0.2)", color: "#00f5ff", fontFamily: "Share Tech Mono,monospace", fontSize: "0.65rem", cursor: "pointer" }}>? Copy Link</button>
             </div>
             <AIAnalysis claim={selected} />
             <Timeline claim={selected} />
@@ -267,7 +271,7 @@ export default function Vote() {
               <span style={{ color: "#ff3366" }}>FALSE {fv} ({100 - pct}%)</span>
             </div>
             {alreadyVoted ? (
-              <div className="vp-voted-tag">✓ YOU HAVE VOTED ON THIS CLAIM</div>
+              <div className="vp-voted-tag">? YOU HAVE VOTED ON THIS CLAIM</div>
             ) : (
               <div className="vp-actions">
                 <button className="vp-vote-true" onClick={() => vote(selected._id, "true")} disabled={voting}>
@@ -288,7 +292,7 @@ export default function Vote() {
     <><style>{css}</style>
       {bcConfirm && <BlockchainConfirm verdict={bcConfirm.verdict} claimId={bcConfirm.claimId} onDone={() => setBcConfirm(null)} />}
       <div className="vp">
-        <button className="vp-back" onClick={() => navigate("/vote")}>← Back</button>
+        <button className="vp-back" onClick={() => navigate("/vote")}>? Back</button>
         <div className="vp-empty"><span className="vp-empty-icon">?</span><div className="vp-empty-title">Claim Not Found</div></div>
       </div>
     </>
@@ -343,7 +347,7 @@ export default function Vote() {
                   </div>
                   <div className="vp-cbtns">
                     {alreadyVoted ? (
-                      <span style={{ flex: 1, textAlign: "center", fontFamily: "'Share Tech Mono',monospace", fontSize: "0.68rem", color: "#00f5ff" }}>✓ VOTED</span>
+                      <span style={{ flex: 1, textAlign: "center", fontFamily: "'Share Tech Mono',monospace", fontSize: "0.68rem", color: "#00f5ff" }}>? VOTED</span>
                     ) : (
                       <>
                         <button className="vp-bt vp-bt-t" onClick={() => vote(claim._id, "true")} disabled={voting}>TRUE</button>
@@ -361,4 +365,3 @@ export default function Vote() {
     </>
   );
 }
-

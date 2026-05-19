@@ -19,7 +19,7 @@ export default function AdminPanel() {
 
   useEffect(() => {
     if (!authed) return;
-    axios.get("http://localhost:5000/api/claims?status=all&limit=100")
+    axios.get(`http://localhost:5000/api/claims?status=all&limit=100`)
       .then(res => { const data = res.data.claims || res.data; setClaims(Array.isArray(data) ? data : []); })
       .catch(() => setClaims([]))
       .finally(() => setLoading(false));
@@ -29,7 +29,7 @@ export default function AdminPanel() {
     if (!selected || !reason.trim()) { setMsg({ type: "error", text: "Select a claim and provide a reason" }); return; }
     setWorking(true);
     try {
-      await axios.post("http://localhost:5000/api/admin/override", {
+      await axios.post(`http://localhost:5000/api/admin/override`, {
         claimId: selected._id,
         verdict: overrideVerdict,
         reason,
@@ -169,3 +169,9 @@ export default function AdminPanel() {
     </div></>
   );
 }
+
+
+
+
+
+

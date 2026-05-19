@@ -42,7 +42,7 @@ export default function Login() {
     if (!form.username || !form.password) { setError("All fields required"); return; }
     setLoading(true);
     try {
-      const res = await axios.post("http://localhost:5000/api/auth/login", {
+      const res = await axios.post(`http://localhost:5000/api/auth/login`, {
         username: form.username,
         password: form.password
       });
@@ -162,3 +162,9 @@ export default function Login() {
     </>
   );
 }
+
+
+
+
+
+

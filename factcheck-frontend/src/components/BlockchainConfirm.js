@@ -100,3 +100,7 @@ const BlockchainConfirm = ({ verdict, claimId, onDone }) => {
 };
 
 export default BlockchainConfirm;
+
+
+
+

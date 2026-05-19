@@ -13,18 +13,18 @@ export default function Profile() {
 
   useEffect(() => {
     if (!user) { navigate("/login"); return; }
-    axios.get("http://localhost:5000/api/claims?status=all&limit=100")
+    axios.get(`http://localhost:5000/api/claims?status=all&limit=100`)
       .then(res => { const data = res.data.claims || res.data; setClaims(Array.isArray(data) ? data : []); })
       .catch(() => setClaims([]))
       .finally(() => setLoading(false));
-    axios.get("http://localhost:5000/api/votes/user/" + username)
+    axios.get(`http://localhost:5000/api/votes/user/` + username)
       .then(res => {
         const votes = res.data.votes || [];
         const map = {};
         votes.forEach(v => { map[v.claimId] = v.choice; });
         setUserVotes(map);
       }).catch(() => {});
-    axios.get("http://localhost:5000/api/auth/reputation/" + username)
+    axios.get(`http://localhost:5000/api/auth/reputation/` + username)
       .then(res => { setReputation(res.data.reputation || 1.0); }).catch(() => {});
   }, []);
 
@@ -236,3 +236,9 @@ export default function Profile() {
     </div></>
   );
 }
+
+
+
+
+
+

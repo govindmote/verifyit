@@ -63,7 +63,7 @@ export default function Register() {
     setLoading(true);
     try {
       const axios = (await import("axios")).default;
-      const res = await axios.post("http://localhost:5000/api/auth/register", {
+      const res = await axios.post(`http://localhost:5000/api/auth/register`, {
         username: form.username, email: form.email, password: form.password
       });
       localStorage.setItem("token", res.data.token);
@@ -250,3 +250,9 @@ export default function Register() {
     </>
   );
 }
+
+
+
+
+
+

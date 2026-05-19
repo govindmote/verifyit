@@ -7,7 +7,7 @@ export default function BlockchainExplorer() {
   const [stats, setStats] = useState({ total: 0, recorded: 0, pending: 0 });
 
   useEffect(() => {
-    axios.get("http://localhost:5000/api/claims?status=all&limit=100")
+    axios.get(`http://localhost:5000/api/claims?status=all&limit=100`)
       .then(res => {
         const data = res.data.claims || res.data;
         const list = Array.isArray(data) ? data : [];
@@ -194,4 +194,10 @@ export default function BlockchainExplorer() {
     </div></>
   );
 }
+
+
+
+
+
+
 

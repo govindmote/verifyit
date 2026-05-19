@@ -1,4 +1,4 @@
-﻿import React from "react";
+import React from "react";
 
 export default function VerdictCertificate({ claim, onClose }) {
   const verdictColor = claim.verdict === "TRUE" ? "#00c853" : claim.verdict === "FALSE" ? "#d50000" : "#ff6f00";

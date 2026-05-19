@@ -1,4 +1,4 @@
-﻿import React, { useState } from "react";
+import React, { useState } from "react";
 
 function analyzeLocally(claim) {
   const title = (claim.title || "").toLowerCase();

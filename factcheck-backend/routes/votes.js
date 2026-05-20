@@ -39,7 +39,7 @@ router.post("/", async (req, res) => {
     const fv = updated.votes.false || 0;
     const total = tv + fv;
     let verdict = null;
-    if (total >= 1) {
+    if (total >= 3) {
       const pct = tv / total;
       if (pct >= 0.6) verdict = "TRUE";
       else if (pct <= 0.4) verdict = "FALSE";
@@ -116,3 +116,4 @@ router.get("/user/:address", async (req, res) => {
 });
 
 module.exports = router;
+

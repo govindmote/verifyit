@@ -1,4 +1,4 @@
-const { ethers } = require("ethers");
+﻿const { ethers } = require("ethers");
 const contract = require("./blockchain/VerifyIt.json");
 
 const provider = new ethers.JsonRpcProvider(process.env.RPC_URL);
@@ -11,18 +11,18 @@ const verifyItContract = new ethers.Contract(
 
 const storeVerdictOnChain = async (claimId, title, verdict, trueVotes, falseVotes) => {
   try {
-    console.log(`⛓ Storing verdict on chain for claim: ${claimId}`);
+    console.log(`â›“ Storing verdict on chain for claim: ${claimId}`);
     const tx = await verifyItContract.storeVerdict(
       claimId,
       title,
       verdict,
-      BigInt(trueVotes),
-      BigInt(falseVotes),
+      BigInt(Math.round(trueVotes)),
+      BigInt(Math.round(falseVotes)),
       { gasPrice: ethers.parseUnits("30", "gwei"), gasLimit: 500000 }
     );
-    console.log(`⛓ Transaction sent: ${tx.hash}`);
+    console.log(`â›“ Transaction sent: ${tx.hash}`);
     const receipt = await tx.wait();
-    console.log(`✅ Confirmed in block: ${receipt.blockNumber}`);
+    console.log(`âœ… Confirmed in block: ${receipt.blockNumber}`);
     return {
       txHash: tx.hash,
       blockNumber: receipt.blockNumber,

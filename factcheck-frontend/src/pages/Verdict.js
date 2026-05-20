@@ -1,15 +1,13 @@
 ﻿import React, { useEffect, useState } from "react";
 import axios from "axios";
-import VerdictCertificate from "../components/VerdictCertificate";
 
 export default function Verdict() {
   const [claims, setClaims] = useState([]);
   const [filter, setFilter] = useState("all");
   const [loading, setLoading] = useState(true);
-  const [certClaim, setCertClaim] = useState(null);
 
   useEffect(() => {
-    axios.get(`http://localhost:5000/api/claims?status=all&limit=100`)
+    axios.get("http://localhost:5000/api/claims?status=all&limit=100")
       .then(res => {
         const data = res.data.claims || res.data;
         setClaims(Array.isArray(data) ? data : []);
@@ -20,10 +18,10 @@ export default function Verdict() {
 
   const getVerdict = (v) => {
     const val = String(v || "").toUpperCase();
-    if (val === "TRUE")       return { label: "VERIFIED TRUE",   cls: "g", icon: "âœ…" };
-    if (val === "FALSE")      return { label: "MARKED FALSE",    cls: "r", icon: "âŒ" };
-    if (val === "UNVERIFIED") return { label: "UNVERIFIED",      cls: "y", icon: "âš ï¸" };
-    return                           { label: "PENDING VERDICT", cls: "y", icon: "â³" };
+    if (val === "TRUE")       return { label: "VERIFIED TRUE",   cls: "g", icon: "V" };
+    if (val === "FALSE")      return { label: "MARKED FALSE",    cls: "r", icon: "X" };
+    if (val === "UNVERIFIED") return { label: "UNVERIFIED",      cls: "y", icon: "?" };
+    return                           { label: "PENDING VERDICT", cls: "y", icon: "..." };
   };
 
   const filtered = claims.filter(c => {
@@ -76,9 +74,7 @@ export default function Verdict() {
     .vrd-bar{height:6px;background:rgba(26,39,68,0.9);border-radius:3px;overflow:hidden;margin-bottom:0.45rem;}
     .vrd-bar-fill{height:100%;border-radius:3px;background:linear-gradient(90deg,#00ff88,#00f5ff);transition:width 0.5s;}
     .vrd-stats{display:flex;justify-content:space-between;font-family:'Share Tech Mono',monospace;font-size:0.67rem;margin-bottom:1rem;}
-    .vrd-chain{font-family:'Share Tech Mono',monospace;font-size:0.6rem;border-top:1px solid rgba(26,39,68,0.6);padding-top:0.75rem;margin-top:0.25rem;margin-bottom:0.75rem;}
-    .vrd-cert-btn{width:100%;padding:0.5rem;background:rgba(0,245,255,0.06);border:1px solid rgba(0,245,255,0.2);border-radius:8px;color:#00f5ff;font-family:'Share Tech Mono',monospace;font-size:0.65rem;cursor:pointer;letter-spacing:0.08em;transition:all 0.2s;}
-    .vrd-cert-btn:hover{background:rgba(0,245,255,0.12);border-color:rgba(0,245,255,0.4);}
+    .vrd-chain{font-family:'Share Tech Mono',monospace;font-size:0.6rem;color:rgba(100,116,139,0.35);border-top:1px solid rgba(26,39,68,0.6);padding-top:0.75rem;margin-top:0.25rem;}
     .vrd-loading{display:flex;align-items:center;justify-content:center;height:200px;font-family:'Share Tech Mono',monospace;font-size:0.85rem;color:#00f5ff;gap:0.75rem;}
     .vrd-spin{width:18px;height:18px;border:2px solid rgba(0,245,255,0.2);border-top-color:#00f5ff;border-radius:50%;animation:vrdspin 0.7s linear infinite;}
     @keyframes vrdspin{to{transform:rotate(360deg);}}
@@ -86,19 +82,8 @@ export default function Verdict() {
     .vrd-empty-icon{font-size:3rem;display:block;margin-bottom:1rem;}
     .vrd-empty-title{font-family:'Orbitron',monospace;font-size:1rem;color:var(--text,#e2e8f0);}
     .vrd-count{font-family:'Share Tech Mono',monospace;font-size:0.58rem;opacity:0.6;margin-left:0.3rem;}
-    [data-theme="light"] .vrd-card{background:#ffffff;border-color:rgba(0,0,0,0.1);}
-    [data-theme="light"] .vrd-ctitle{color:#1e293b;}
-    [data-theme="light"] .vrd-cdesc{color:#475569;}
-    [data-theme="light"] .vrd-id{color:#94a3b8;}
-    [data-theme="light"] .vrd-sub{color:#64748b;}
-    [data-theme="light"] .vrd-title{color:#0369a1;border-color:#0369a1;}
-    [data-theme="light"] .vrd-fbtn{color:#475569;border-color:rgba(0,0,0,0.15);}
-    [data-theme="light"] .vrd-count{color:#94a3b8;}
-    [data-theme="light"] .vrd-bar{background:rgba(0,0,0,0.08);}
-    [data-theme="light"] .vrd-chain{color:#334155;border-color:rgba(0,0,0,0.12);}
-    [data-theme="light"] .vrd-chain a{color:#0369a1;}
-    [data-theme="light"] .vrd-chain span{color:#475569;}
-    [data-theme="light"] .vrd-stats span{opacity:1;}
+    .vrd-cert-btn{width:100%;margin-top:0.75rem;padding:0.5rem;background:transparent;border:1px solid rgba(0,245,255,0.2);border-radius:8px;color:#00f5ff;font-family:'Share Tech Mono',monospace;font-size:0.65rem;cursor:pointer;transition:all 0.2s;letter-spacing:0.05em;}
+    .vrd-cert-btn:hover{background:rgba(0,245,255,0.08);border-color:#00f5ff;}
   `;
 
   if (loading) return (
@@ -108,21 +93,25 @@ export default function Verdict() {
 
   const filterDefs = [
     { key: "all",        label: "All",           count: counts.all },
-    { key: "TRUE",       label: "âœ… True",        count: counts.TRUE },
-    { key: "FALSE",      label: "âŒ False",       count: counts.FALSE },
-    { key: "UNVERIFIED", label: "âš ï¸ Unverified", count: counts.UNVERIFIED },
-    { key: "PENDING",    label: "â³ Pending",     count: counts.PENDING },
+    { key: "TRUE",       label: "True",          count: counts.TRUE },
+    { key: "FALSE",      label: "False",         count: counts.FALSE },
+    { key: "UNVERIFIED", label: "Unverified",    count: counts.UNVERIFIED },
+    { key: "PENDING",    label: "Pending",       count: counts.PENDING },
   ];
 
   return (
     <><style>{css}</style>
     <div className="vrd">
       <div className="vrd-hdr">
-        <div className="vrd-title">âš–ï¸ Verdicts</div>
+        <div className="vrd-title">VERDICTS</div>
         <div className="vrd-sub">All verdicts are permanently recorded on Polygon Amoy Testnet.</div>
         <div className="vrd-filters">
           {filterDefs.map(f => (
-            <button key={f.key} className={`vrd-fbtn ${filter === f.key ? "active-" + f.key : ""}`} onClick={() => setFilter(f.key)}>
+            <button
+              key={f.key}
+              className={`vrd-fbtn ${filter === f.key ? "active-" + f.key : ""}`}
+              onClick={() => setFilter(f.key)}
+            >
               {f.label} <span className="vrd-count">({f.count})</span>
             </button>
           ))}
@@ -131,18 +120,19 @@ export default function Verdict() {
 
       {filtered.length === 0 ? (
         <div className="vrd-empty">
-          <span className="vrd-empty-icon">âš–ï¸</span>
           <div className="vrd-empty-title">No verdicts in this category</div>
         </div>
       ) : (
         <div className="vrd-grid">
           {filtered.map(claim => {
-            const tv = claim.votes?.true || 0;
-            const fv = claim.votes?.false || 0;
+            const tv = Math.round(claim.votes?.true || 0);
+            const fv = Math.round(claim.votes?.false || 0);
             const total = tv + fv;
             const pct = total > 0 ? Math.round(tv / total * 100) : 50;
             const v = getVerdict(claim.verdict);
             const vKey = String(claim.verdict || "PENDING").toUpperCase();
+            const txHash = claim.blockchain?.txHash;
+            const validHash = txHash && txHash !== "already-recorded" && txHash.length > 10;
             return (
               <div key={claim._id} className={`vrd-card cv-${vKey}`}>
                 <div className="vrd-top">
@@ -153,33 +143,22 @@ export default function Verdict() {
                 <div className="vrd-cdesc">{(claim.description||"").slice(0,100)}...</div>
                 <div className="vrd-bar"><div className="vrd-bar-fill" style={{width:`${pct}%`}}/></div>
                 <div className="vrd-stats">
-                  <span style={{color:"#00ff88"}}>âœ… {tv} True ({pct}%)</span>
-                  <span style={{color:"#ff3366"}}>âŒ {fv} False ({100-pct}%)</span>
+                  <span style={{color:"#00ff88"}}>{tv} True ({pct}%)</span>
+                  <span style={{color:"#ff3366"}}>{fv} False ({100-pct}%)</span>
                 </div>
                 <div className="vrd-chain">
-                  {claim.blockchain && claim.blockchain.txHash && claim.blockchain.txHash.length > 10
-                    ? <a href={`https://amoy.polygonscan.com/tx/${claim.blockchain.txHash}`} target="_blank" rel="noreferrer" style={{textDecoration:"none",color:"#00b4cc"}}>{claim.blockchain.txHash.slice(0,20)}...{claim.blockchain.txHash.slice(-6)} â†—</a>
-                    : <span style={{color:"#64748b"}}>â›“ Recorded on Polygon Amoy</span>}
+                  {validHash
+                    ? <a href={`https://amoy.polygonscan.com/tx/${txHash}`} target="_blank" rel="noreferrer" style={{textDecoration:"none",color:"#00b4cc"}}>
+                        {txHash.slice(0,18)}...{txHash.slice(-6)} &rarr;
+                      </a>
+                    : <span style={{color:"#64748b"}}>Recorded on Polygon Amoy</span>
+                  }
                 </div>
-                {claim.verdict && (
-                  <button className="vrd-cert-btn" onClick={() => setCertClaim(claim)}>
-                    &#128196; DOWNLOAD CERTIFICATE
-                  </button>
-                )}
               </div>
             );
           })}
         </div>
       )}
-    </div>
-    {certClaim && <VerdictCertificate claim={certClaim} onClose={() => setCertClaim(null)} />}
-    </>
+    </div></>
   );
 }
-
-
-
-
-
-
-

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+﻿import React, { useEffect, useState } from "react";
 import axios from "axios";
 import VerdictCertificate from "../components/VerdictCertificate";
 
@@ -20,10 +20,10 @@ export default function Verdict() {
 
   const getVerdict = (v) => {
     const val = String(v || "").toUpperCase();
-    if (val === "TRUE")       return { label: "VERIFIED TRUE",   cls: "g", icon: "✅" };
-    if (val === "FALSE")      return { label: "MARKED FALSE",    cls: "r", icon: "❌" };
-    if (val === "UNVERIFIED") return { label: "UNVERIFIED",      cls: "y", icon: "⚠️" };
-    return                           { label: "PENDING VERDICT", cls: "y", icon: "⏳" };
+    if (val === "TRUE")       return { label: "VERIFIED TRUE",   cls: "g", icon: "âœ…" };
+    if (val === "FALSE")      return { label: "MARKED FALSE",    cls: "r", icon: "âŒ" };
+    if (val === "UNVERIFIED") return { label: "UNVERIFIED",      cls: "y", icon: "âš ï¸" };
+    return                           { label: "PENDING VERDICT", cls: "y", icon: "â³" };
   };
 
   const filtered = claims.filter(c => {
@@ -108,17 +108,17 @@ export default function Verdict() {
 
   const filterDefs = [
     { key: "all",        label: "All",           count: counts.all },
-    { key: "TRUE",       label: "✅ True",        count: counts.TRUE },
-    { key: "FALSE",      label: "❌ False",       count: counts.FALSE },
-    { key: "UNVERIFIED", label: "⚠️ Unverified", count: counts.UNVERIFIED },
-    { key: "PENDING",    label: "⏳ Pending",     count: counts.PENDING },
+    { key: "TRUE",       label: "âœ… True",        count: counts.TRUE },
+    { key: "FALSE",      label: "âŒ False",       count: counts.FALSE },
+    { key: "UNVERIFIED", label: "âš ï¸ Unverified", count: counts.UNVERIFIED },
+    { key: "PENDING",    label: "â³ Pending",     count: counts.PENDING },
   ];
 
   return (
     <><style>{css}</style>
     <div className="vrd">
       <div className="vrd-hdr">
-        <div className="vrd-title">⚖️ Verdicts</div>
+        <div className="vrd-title">âš–ï¸ Verdicts</div>
         <div className="vrd-sub">All verdicts are permanently recorded on Polygon Amoy Testnet.</div>
         <div className="vrd-filters">
           {filterDefs.map(f => (
@@ -131,7 +131,7 @@ export default function Verdict() {
 
       {filtered.length === 0 ? (
         <div className="vrd-empty">
-          <span className="vrd-empty-icon">⚖️</span>
+          <span className="vrd-empty-icon">âš–ï¸</span>
           <div className="vrd-empty-title">No verdicts in this category</div>
         </div>
       ) : (
@@ -153,13 +153,13 @@ export default function Verdict() {
                 <div className="vrd-cdesc">{(claim.description||"").slice(0,100)}...</div>
                 <div className="vrd-bar"><div className="vrd-bar-fill" style={{width:`${pct}%`}}/></div>
                 <div className="vrd-stats">
-                  <span style={{color:"#00ff88"}}>✅ {tv} True ({pct}%)</span>
-                  <span style={{color:"#ff3366"}}>❌ {fv} False ({100-pct}%)</span>
+                  <span style={{color:"#00ff88"}}>âœ… {tv} True ({pct}%)</span>
+                  <span style={{color:"#ff3366"}}>âŒ {fv} False ({100-pct}%)</span>
                 </div>
                 <div className="vrd-chain">
-                  {claim.blockchain?.txHash && claim.blockchain.txHash !== "already-recorded"
-                    ? <a href={`https://amoy.polygonscan.com/tx/${claim.blockchain.txHash}`} target="_blank" rel="noreferrer" style={{textDecoration:"none",color:"#00b4cc"}}>{claim.blockchain.txHash.slice(0,20)}...{claim.blockchain.txHash.slice(-6)} ↗</a>
-                    : <span style={{color:"#64748b"}}>⛓ Recorded on Polygon Amoy</span>}
+                  {claim.blockchain && claim.blockchain.txHash && claim.blockchain.txHash.length > 10
+                    ? <a href={`https://amoy.polygonscan.com/tx/${claim.blockchain.txHash}`} target="_blank" rel="noreferrer" style={{textDecoration:"none",color:"#00b4cc"}}>{claim.blockchain.txHash.slice(0,20)}...{claim.blockchain.txHash.slice(-6)} â†—</a>
+                    : <span style={{color:"#64748b"}}>â›“ Recorded on Polygon Amoy</span>}
                 </div>
                 {claim.verdict && (
                   <button className="vrd-cert-btn" onClick={() => setCertClaim(claim)}>
@@ -176,6 +176,7 @@ export default function Verdict() {
     </>
   );
 }
+
 
 
 
